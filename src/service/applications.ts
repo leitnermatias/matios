@@ -1,0 +1,54 @@
+import {reactive} from "vue"
+import type { Component } from 'vue'
+import Calculator from "../components/apps/Calculator.vue"
+import Terminal from "../components/apps/Terminal.vue"
+
+
+export type Application = {
+    opened: boolean,
+    showing: boolean,
+    label: string,
+    title: string,
+    name: string,
+    icon?: string,
+    component: Component,
+    styles?: string,
+}
+
+export default reactive<
+    {
+        applications: Application[],
+        openApp: (application: Application) => void,
+        closeApp: (application: Application) => void,
+    }
+>({
+    // Setup default applications here
+    applications: [
+        {
+            opened: false,
+            showing: false,
+            label: 'Calculator',
+            title: 'Calculator',
+            name: 'Calculator',
+            icon: 'fa-calculator',
+            component: Calculator
+        },
+        {
+            opened: false,
+            showing: false,
+            label: 'Terminal',
+            title: 'Terminal',
+            name: 'Terminal',
+            icon: 'fa-terminal',
+            component: Terminal
+        },
+    ],
+    openApp(application: Application) {
+        application.opened = true;
+        application.showing = true;
+    },
+    closeApp(application: Application) {
+        application.opened = false;
+        application.showing = false;
+    }
+})
