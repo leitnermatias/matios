@@ -15,15 +15,18 @@ function startApp(app: Application) {
 <template>
   <div id="main">
     <div id="viewport">
-      <Transition name="menu-fade">
+      <Transition name="fade">
         <div v-if="showStartMenu" id="start-menu">
           <span @click="startApp(app)" class="start-menu-app" v-for="app in ApplicationService.applications">
             <v-icon v-if="app.icon" :name="app.icon"></v-icon>{{ app.name }}
           </span>
         </div>
       </Transition>
+      <TransitionGroup name="fade" appear>
         <component 
-        v-for="app in ApplicationService.applications.filter(app => app.opened && app.showing)" 
+        v-for="app in ApplicationService.applications" 
+        v-show="app.showing"
+        :key="app.name"
         :is="app.component"
         class="app-window" 
         >
@@ -31,19 +34,27 @@ function startApp(app: Application) {
             <div class="app-topbar">
               <span>{{ app.name }}</span>
               <div>
-                <v-icon class="app-topbar-icon" name="fa-minus"></v-icon>
-                <v-icon class="app-topbar-icon" name="fa-window-close"></v-icon>
+                <v-icon @click="() => app.showing = false" class="app-topbar-icon" name="fa-minus"></v-icon>
+                <v-icon @click="ApplicationService.closeApp(app)" class="app-topbar-icon" name="fa-window-close"></v-icon>
               </div>
             </div>
           </template>
         </component>
+      </TransitionGroup>
     </div>
     <div id="bottom-bar">
       <button @click="() => showStartMenu = !showStartMenu" id="start-button">
         <v-icon name="fa-brain" fill="#5cbeff"></v-icon>
       </button>
       <div id="applications">
-        <span class="application" v-for="app in ApplicationService.applications.filter(app => app.opened)">{{ app.label }}</span>
+        <TransitionGroup name="fade">
+          <span 
+          class="application" 
+          :key="app.name"
+          v-for="app in ApplicationService.applications.filter(app => app.opened)"
+          @click="() => app.showing = !app.showing"
+          >{{ app.label }}</span>
+        </TransitionGroup>
       </div>
     </div>
   </div>
@@ -90,7 +101,7 @@ function startApp(app: Application) {
   background: rgba(255, 255, 255, 0.454);
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.315);
   border-radius: 5px;
-  width: 20%;
+  width: 200px;
   height: 50%;
   overflow: auto;
   scrollbar-width: thin;
@@ -109,13 +120,13 @@ function startApp(app: Application) {
   background-color: rgba(0, 47, 73, 0.308);
 }
 
-.menu-fade-enter-active,
-.menu-fade-leave-active {
-  transition: opacity 0.5s ease;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.7s ease;
 }
 
-.menu-fade-enter-from,
-.menu-fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 
@@ -130,14 +141,14 @@ function startApp(app: Application) {
 }
 
 .application {
-  background: rgb(224, 224, 224);
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.201);
   padding: 10px;
-  border-radius: 1px;
+  border-radius: 2px;
   cursor: pointer;
 }
 
 .application:hover {
-  background: white;
+  background: rgba(255, 255, 255, 0.281);
 }
 
 .start-menu-app {
