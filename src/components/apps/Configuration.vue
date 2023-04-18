@@ -32,15 +32,11 @@ const activeScreen = computed(() => {
 </script>
 
 <style scoped>
-#container {
-    width: 400px;
-    height: 300px;
-}
 
 #window {
     background-color: rgba(255, 255, 255, 0.612);
-    width: 100%;
-    height: 271px;
+    width: 400px;
+    height: 300px;
     display: flex;
     margin: 0;
     padding: 0
