@@ -212,15 +212,11 @@ function runCommand() {
 </script>
 
 <style scoped>
-#container {
-    width: 500px;
-    height: 300px;
-}
 
 #window {
     background: black;
-    width: 100%;
-    height: 100%;
+    width: 500px;
+    height: 300px;
     font-family: monospace;
     display: flex;
     flex-direction: column;

@@ -45,15 +45,11 @@ const { style } = useDraggable(el)
 </script>
 
 <style scoped>
-#container {
-    width: 250px;
-    height: 250px;
-}
 
 #window {
     background-color: white;
-    width: 100%;
-    height: 100%;
+    width: 250px;
+    height: 250px;
     display: flex;
     flex-direction: column;
     align-items: center;
