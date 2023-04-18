@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import ApplicationService, {Application} from "./service/applications"
 import globalState from "./globalState";
 
@@ -23,6 +23,17 @@ function startApp(app: Application) {
   showStartMenu.value = false;
 }
 
+const extraApps = ref<Application[]>([
+  configApp.value
+])
+
+const activeApps = computed<Application[]>(() => {
+  return [
+    ...ApplicationService.applications.filter(app => app.opened),
+    ...extraApps.value
+  ]
+})
+
 </script>
 
 <template>
@@ -40,7 +51,7 @@ function startApp(app: Application) {
       </Transition>
       <TransitionGroup name="fade" appear>
         <component 
-        v-for="app in [...ApplicationService.applications, configApp]" 
+        v-for="app in activeApps" 
         v-show="app.showing"
         :key="app.name"
         :is="app.component"
