@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ApplicationService, {Application} from "./service/applications"
+import globalState from "./globalState";
+
+import Configuration from "./components/apps/Configuration.vue"
+
+const configApp = ref({
+  opened: false,
+  showing: false,
+  label: 'Configuration',
+  title: 'Configuration',
+  name: 'Configuration',
+  icon: 'fa-cog',
+  component: Configuration
+})
 
 const showStartMenu = ref(false);
 
@@ -13,10 +26,13 @@ function startApp(app: Application) {
 </script>
 
 <template>
-  <div id="main">
-    <div id="viewport">
+  <div id="main" :style="globalState.mainStyles">
+    <div id="viewport" :style="globalState.viewportStyles">
       <Transition name="fade">
         <div v-if="showStartMenu" id="start-menu">
+          <div id="start-menu-buttons">
+            <button @click="startApp(configApp)" class="start-menu-button"><v-icon name="fa-cog"></v-icon></button>
+          </div>
           <span @click="startApp(app)" class="start-menu-app" v-for="app in ApplicationService.applications">
             <v-icon v-if="app.icon" :name="app.icon"></v-icon>{{ app.name }}
           </span>
@@ -24,7 +40,7 @@ function startApp(app: Application) {
       </Transition>
       <TransitionGroup name="fade" appear>
         <component 
-        v-for="app in ApplicationService.applications" 
+        v-for="app in [...ApplicationService.applications, configApp]" 
         v-show="app.showing"
         :key="app.name"
         :is="app.component"
@@ -32,7 +48,7 @@ function startApp(app: Application) {
         >
           <template #topbar>
             <div class="app-topbar">
-              <span>{{ app.name }}</span>
+              <span><v-icon :name="app.icon"></v-icon> {{ app.name }}</span>
               <div>
                 <v-icon @click="() => app.showing = false" class="app-topbar-icon" name="fa-minus"></v-icon>
                 <v-icon @click="ApplicationService.closeApp(app)" class="app-topbar-icon" name="fa-window-close"></v-icon>
@@ -42,7 +58,7 @@ function startApp(app: Application) {
         </component>
       </TransitionGroup>
     </div>
-    <div id="bottom-bar">
+    <div id="bottom-bar" :style="globalState.bottomNavStyles">
       <button @click="() => showStartMenu = !showStartMenu" id="start-button">
         <v-icon name="fa-brain" fill="#5cbeff"></v-icon>
       </button>
@@ -51,7 +67,8 @@ function startApp(app: Application) {
           <span 
           class="application" 
           :key="app.name"
-          v-for="app in ApplicationService.applications.filter(app => app.opened)"
+          v-show="app.opened"
+          v-for="app in [...ApplicationService.applications, configApp]"
           @click="() => app.showing = !app.showing"
           >{{ app.label }}</span>
         </TransitionGroup>
@@ -61,12 +78,21 @@ function startApp(app: Application) {
 </template>
 
 <style scoped>
+
+@font-face {
+  font-family: "Poppins";
+  src: local("Poppins"),   url(./fonts/Poppins-Light.ttf) format("truetype");
+}
+
+
 #main {
   background: rgb(226, 226, 226);
   height: 100vh;
   width: 100vw;
   margin: 0;
   padding: 0;
+  font-family: "Poppins";
+  font-size: 14px;
 }
 
 #viewport {
@@ -168,6 +194,21 @@ function startApp(app: Application) {
   color: rgba(0, 2, 63, 0.566);
 }
 
+#start-menu-buttons {
+  margin-bottom: 5px;
+}
+
+.start-menu-button {
+  background: none;
+  border: none;
+  color: rgb(67, 169, 252);
+  cursor: pointer;
+}
+
+.start-menu-button:hover {
+  color: rgba(67, 169, 252, 0.541);
+}
+
 .app-topbar {
   background: white;
   display: flex;
@@ -188,5 +229,6 @@ function startApp(app: Application) {
 .app-window {
   border-radius: 2px;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.372);
+  height:auto
 }
 </style>
