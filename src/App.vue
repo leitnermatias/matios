@@ -70,7 +70,7 @@ function startApp(app: Application) {
           v-show="app.opened"
           v-for="app in [...ApplicationService.applications, configApp]"
           @click="() => app.showing = !app.showing"
-          >{{ app.label }}</span>
+          ><v-icon :name="app.icon"></v-icon>  {{ app.label }}</span>
         </TransitionGroup>
       </div>
     </div>
@@ -187,6 +187,7 @@ function startApp(app: Application) {
   border-radius: 5px;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.372);
   cursor: pointer;
+  margin: 2px 0px;
 }
 
 .start-menu-app:hover {
