@@ -1,25 +1,30 @@
 <template>
-    <div id="container" ref="el" :style="style" style="position: fixed">
-        <slot name="topbar"></slot>
+    <Window>
+        <template #topbar>
+            <slot name="topbar"></slot>
+        </template>
 
-        <div id="window">
-            <div id="left-nav">
-                <button class="config-button">Colors</button>
+        <template #window>
+            <div id="container">
+                
+        
+                <div id="window">
+                    <div id="left-nav">
+                        <button class="config-button">Colors</button>
+                    </div>
+                    <div id="config">
+                        <component :is="activeScreen?.component"></component>
+                    </div>
+                </div>
             </div>
-            <div id="config">
-                <component :is="activeScreen?.component"></component>
-            </div>
-        </div>
-    </div>
+        </template>
+    </Window>
 </template>
 
 <script setup lang="ts">
-import {useDraggable} from "@vueuse/core"
 import {computed, reactive, ref} from "vue"
 import ColorConfig from "../ColorConfig.vue";
-
-const el = ref<HTMLElement | null>(null)
-const { style } = useDraggable(el)
+import Window from "../Window.vue";
 
 const configScreens = reactive([
     {active: true, component: ColorConfig}

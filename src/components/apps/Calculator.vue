@@ -1,35 +1,37 @@
 <template>
-    <div id="container" ref="el" :style="style" style="position: fixed">
-        <slot name="topbar"></slot>
+    <Window>
+        <template #topbar>
+            <slot name="topbar"></slot>
+        </template>
 
-        <div id="window">
-            <div id="screen">
-                {{currentOperation || 'Please enter your operation'}}
-            </div>
-            <div id="buttons">
-                <div id="numbers">
-                    <button @click="addToOperation(number)" class="number-button" v-for="number in ['1','2','3','4','5','6','7','8','9','.','0']">
-                        {{ number }}
-                    </button>
+        <template #window>
+            <div id="window">
+                <div id="screen">
+                    {{currentOperation || 'Please enter your operation'}}
                 </div>
-                <div id="operations">
-                    <button @click="() => currentOperation = ''">C</button>
-                    <button @click="addToOperation('+')">+</button>
-                    <button @click="addToOperation('*')">*</button>
-                    <button @click="addToOperation('-')">-</button>
-                    <button @click="addToOperation('/')">/</button>
-                    <button @click="doOperation">=</button>
+                <div id="buttons">
+                    <div id="numbers">
+                        <button @click="addToOperation(number)" class="number-button" v-for="number in ['1','2','3','4','5','6','7','8','9','.','0']">
+                            {{ number }}
+                        </button>
+                    </div>
+                    <div id="operations">
+                        <button @click="() => currentOperation = ''">C</button>
+                        <button @click="addToOperation('+')">+</button>
+                        <button @click="addToOperation('*')">*</button>
+                        <button @click="addToOperation('-')">-</button>
+                        <button @click="addToOperation('/')">/</button>
+                        <button @click="doOperation">=</button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </template>
+    </Window>
 </template>
 
 <script setup lang="ts">
-import {useDraggable} from "@vueuse/core"
 import {ref} from "vue"
-
-const el = ref<HTMLElement | null>(null)
+import Window from "../Window.vue";
 
 const currentOperation = ref("");
 
@@ -41,7 +43,6 @@ function doOperation() {
     currentOperation.value = eval(currentOperation.value)
 }
 
-const { style } = useDraggable(el)
 </script>
 
 <style scoped>

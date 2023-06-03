@@ -1,31 +1,33 @@
 <template>
-    <div id="container" ref="el" :style="style" style="position: fixed">
-        <slot name="topbar"></slot>
+    <Window>
+        <template #topbar>
+            <slot name="topbar"></slot>
+        </template>
+        <template #window>
+            <div id="container">
 
-        <div id="window"> 
-            <span class="history-command" v-for="command in history">
-                <span>
-                    {{ command.path }} > {{ command.command }}
-                </span>
-                <span>
-                    {{ command.result }}
-                </span>
-            </span>
-            <span id="prompt">
-                {{ currentFolder.path }} > 
-                <input id="prompt-input" v-model="currentCommand" type="text" v-on:keyup.native.enter="runCommand">
-            </span>
-        </div>
-    </div>
+                <div id="window">
+                    <span class="history-command" v-for="command in history">
+                        <span>
+                            {{ command.path }} > {{ command.command }}
+                        </span>
+                        <span>
+                            {{ command.result }}
+                        </span>
+                    </span>
+                    <span id="prompt">
+                        {{ currentFolder.path }} >
+                        <input id="prompt-input" v-model="currentCommand" type="text" v-on:keyup.native.enter="runCommand">
+                    </span>
+                </div>
+            </div>
+        </template>
+    </Window>
 </template>
 
 <script setup lang="ts">
-import {useDraggable} from "@vueuse/core"
-import {computed, reactive, ref} from "vue"
-
-const el = ref<HTMLElement | null>(null)
-
-const { style } = useDraggable(el)
+import { computed, reactive, ref } from "vue"
+import Window from "../Window.vue";
 
 interface CommandResult {
     command: string,
@@ -35,77 +37,69 @@ interface CommandResult {
 const history = ref<CommandResult[]>([])
 const currentCommand = ref("");
 
-interface FileSystemElement {
-    path: string,
-    active: boolean,
-    parent: null | string
-}
-
-
-
 class Folder {
-  path: string;
-  active: boolean;
-  contents: Folder[];
+    path: string;
+    active: boolean;
+    contents: Folder[];
 
-  constructor(path: string, contents: Folder[] = [], active: boolean = false) {
-    this.path = path;
-    this.contents = contents;
-    this.active = active;
-  }
-
-  getChildByPath(path: string): Folder | null {
-    let fullPath = path;
-    if (!path.startsWith("/")) {
-      fullPath = `${this.path}${this.path.endsWith('/') ? '' : '/'}${path}`;
+    constructor(path: string, contents: Folder[] = [], active: boolean = false) {
+        this.path = path;
+        this.contents = contents;
+        this.active = active;
     }
 
-    if (this.path === fullPath) {
-      return this;
+    getChildByPath(path: string): Folder | null {
+        let fullPath = path;
+        if (!path.startsWith("/")) {
+            fullPath = `${this.path}${this.path.endsWith('/') ? '' : '/'}${path}`;
+        }
+
+        if (this.path === fullPath) {
+            return this;
+        }
+
+        for (const child of this.contents) {
+            const foundChild = child.getChildByPath(fullPath);
+            if (foundChild) {
+                return foundChild;
+            }
+        }
+
+        return null;
     }
 
-    for (const child of this.contents) {
-      const foundChild = child.getChildByPath(fullPath);
-      if (foundChild) {
-        return foundChild;
-      }
+    getActiveFolder(): Folder | null {
+        if (this.active) {
+            return this;
+        }
+
+        for (const child of this.contents) {
+            const activeChild = child.getActiveFolder();
+            if (activeChild) {
+                return activeChild;
+            }
+        }
+
+        return null;
     }
 
-    return null;
-  }
-
-  getActiveFolder(): Folder | null {
-    if (this.active) {
-      return this;
+    getRelativeContents(): Folder[] {
+        const relativeContents: Folder[] = [];
+        for (const child of this.contents) {
+            let childPath = child.path.split('/').pop()
+            const relativeChild = new Folder(childPath || '', child.contents);
+            relativeContents.push(relativeChild);
+        }
+        return relativeContents;
     }
 
-    for (const child of this.contents) {
-      const activeChild = child.getActiveFolder();
-      if (activeChild) {
-        return activeChild;
-      }
+    getParent(): Folder | null {
+        const parentPath = this.path.split("/").slice(0, -1).join("/");
+        if (parentPath === "") {
+            return null;
+        }
+        return new Folder(parentPath);
     }
-
-    return null;
-  }
-
-  getRelativeContents(): Folder[] {
-    const relativeContents: Folder[] = [];
-    for (const child of this.contents) {
-        let childPath = child.path.split('/').pop()
-        const relativeChild = new Folder(childPath || '', child.contents);
-        relativeContents.push(relativeChild);
-    }
-    return relativeContents;
-  }
-
-  getParent(): Folder | null {
-    const parentPath = this.path.split("/").slice(0, -1).join("/");
-    if (parentPath === "") {
-      return null;
-    }
-    return new Folder(parentPath);
-  }
 
 }
 
@@ -151,7 +145,7 @@ function runCommand() {
 
     switch (command.split(' ')[0]) {
         case 'ls':
-            commandResult = {command, result: currentFolder.value.getRelativeContents().map(f => f.path).join(' '), path: currentFolder.value.path}
+            commandResult = { command, result: currentFolder.value.getRelativeContents().map(f => f.path).join(' '), path: currentFolder.value.path }
             break;
         case 'cd':
             let folderToMove: Folder | null
@@ -168,7 +162,7 @@ function runCommand() {
             const current = fileSystemRoot.getActiveFolder()
 
             if (!folderToMove) {
-                commandResult = {command, result: 'The folder was not found in the current directory.', path: currentFolder.value.path}
+                commandResult = { command, result: 'The folder was not found in the current directory.', path: currentFolder.value.path }
                 break;
             }
 
@@ -182,26 +176,26 @@ function runCommand() {
                 }
             }
 
-            commandResult = {command, result: '', path: currentFolder.value.path}
+            commandResult = { command, result: '', path: currentFolder.value.path }
 
             break;
         case 'clear':
-            commandResult = {command, result: '', path: currentFolder.value.path}
+            commandResult = { command, result: '', path: currentFolder.value.path }
             afterHistoryCallback = () => {
                 history.value = []
             }
             break;
         case 'echo':
             const result = params.join(' ');
-            commandResult = {command, result, path: currentFolder.value.path}
+            commandResult = { command, result, path: currentFolder.value.path }
             break;
         default:
-            commandResult = {command, result: `${command} is not a recognized command.`, path: currentFolder.value.path}
+            commandResult = { command, result: `${command} is not a recognized command.`, path: currentFolder.value.path }
             break;
     }
     history.value.push(commandResult)
 
-    if(afterHistoryCallback) {
+    if (afterHistoryCallback) {
         afterHistoryCallback()
     }
 
@@ -212,7 +206,6 @@ function runCommand() {
 </script>
 
 <style scoped>
-
 #window {
     background: black;
     width: 500px;
@@ -223,7 +216,8 @@ function runCommand() {
     overflow: auto;
 }
 
-#prompt, .history-command {
+#prompt,
+.history-command {
     color: white;
     padding: 5px;
 }
