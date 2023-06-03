@@ -2,7 +2,7 @@ import {reactive} from "vue"
 import type { Component } from 'vue'
 import Calculator from "../components/apps/Calculator.vue"
 import Terminal from "../components/apps/Terminal.vue"
-
+import TextEditor from "../components/apps/TextEditor.vue"
 
 export type Application = {
     opened: boolean,
@@ -41,6 +41,15 @@ export default reactive<
             name: 'Terminal',
             icon: 'fa-terminal',
             component: Terminal
+        },
+        {
+            opened: false,
+            showing: false,
+            label: 'Notes',
+            title: 'Notes',
+            name: 'Notes',
+            icon: 'fa-pencil-alt',
+            component: TextEditor
         },
     ],
     openApp(application: Application) {

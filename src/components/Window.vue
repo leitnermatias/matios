@@ -3,7 +3,7 @@
     :handle="handle"
     style="position: fixed"
     >
-        <div ref="handle">
+        <div ref="handle" style="cursor: move">
             <slot name="topbar"></slot>
         </div>
 
