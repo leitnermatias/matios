@@ -3,6 +3,7 @@ import type { Component } from 'vue'
 import Calculator from "../components/apps/Calculator.vue"
 import Terminal from "../components/apps/Terminal.vue"
 import TextEditor from "../components/apps/TextEditor.vue"
+import Spreadsheet from "../components/apps/Spreadsheet.vue"
 
 export type Application = {
     opened: boolean,
@@ -50,6 +51,15 @@ export default reactive<
             name: 'Notes',
             icon: 'fa-pencil-alt',
             component: TextEditor
+        },
+        {
+            opened: false,
+            showing: false,
+            label: 'Spreadsheets',
+            title: 'Spreadsheets',
+            name: 'Spreadsheets',
+            icon: 'fa-chart-bar',
+            component: Spreadsheet
         },
     ],
     openApp(application: Application) {
