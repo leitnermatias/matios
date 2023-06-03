@@ -9,10 +9,10 @@
                 <div id="settings">
                     <span>Cells: {{ cells.length }}</span>
                     Columns: <input type="number" v-model="numberOfColumns">
-                    Rows: <input type="number" min="200" v-model="numberOfRows">
+                    Rows: <input type="number" v-model="numberOfRows">
                 </div>
                 <div id="cells">
-                    <input class="cell" v-for="cell in cells" type="text">
+                    <input class="cell" v-for="cell in cells" type="text" v-model="cell.text">
                 </div>
             </div>
         </template>
@@ -23,17 +23,23 @@
 import { computed, ref } from 'vue';
 import Window from '../Window.vue';
 
-const numberOfColumns = ref<number>(500)
-const numberOfRows = ref<number>(10)
+const numberOfColumns = ref<number>(5)
+const numberOfRows = ref<number>(5)
 
 type Cell = {
     text: string,
 }
 
-const cells = computed(() => {
-    return Array<Cell>(numberOfRows.value * numberOfColumns.value).fill({
-        text: ""
-    })
+const cells = computed<Cell[]>(() => {
+    let cells: Cell[] = []
+    let numberOfCells = numberOfRows.value * numberOfColumns.value
+
+    for (let i = 0; i < numberOfCells; i++) {
+        cells.push({
+            text: ""
+        })
+    }
+    return cells
 })
 
 </script>
