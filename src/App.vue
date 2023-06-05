@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, shallowRef } from "vue";
 import ApplicationService, {Application} from "./service/applications"
 import globalState from "./globalState";
 
 import Configuration from "./components/apps/Configuration.vue"
 
-const configApp = ref({
+const configApp = shallowRef({
   opened: false,
   showing: false,
   label: 'Configuration',
@@ -23,7 +23,7 @@ function startApp(app: Application) {
   showStartMenu.value = false;
 }
 
-const extraApps = ref<Application[]>([
+const extraApps = shallowRef<Application[]>([
   configApp.value
 ])
 

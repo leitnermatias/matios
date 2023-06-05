@@ -1,9 +1,9 @@
 import {reactive} from "vue"
-import type { Component } from 'vue'
+import { Component, shallowRef } from 'vue'
 import Calculator from "../components/apps/Calculator.vue"
 import Terminal from "../components/apps/Terminal.vue"
 import TextEditor from "../components/apps/TextEditor.vue"
-import Spreadsheet from "../components/apps/Spreadsheet.vue"
+import Spreadsheet from "../components/apps/spreadsheet/Spreadsheet.vue"
 
 export type Application = {
     opened: boolean,
@@ -32,7 +32,7 @@ export default reactive<
             title: 'Calculator',
             name: 'Calculator',
             icon: 'fa-calculator',
-            component: Calculator
+            component: shallowRef(Calculator)
         },
         {
             opened: false,
@@ -41,7 +41,7 @@ export default reactive<
             title: 'Terminal',
             name: 'Terminal',
             icon: 'fa-terminal',
-            component: Terminal
+            component: shallowRef(Terminal)
         },
         {
             opened: false,
@@ -50,7 +50,7 @@ export default reactive<
             title: 'Notes',
             name: 'Notes',
             icon: 'fa-pencil-alt',
-            component: TextEditor
+            component: shallowRef(TextEditor)
         },
         {
             opened: false,
@@ -59,7 +59,7 @@ export default reactive<
             title: 'Spreadsheets',
             name: 'Spreadsheets',
             icon: 'fa-chart-bar',
-            component: Spreadsheet
+            component: shallowRef(Spreadsheet)
         },
     ],
     openApp(application: Application) {

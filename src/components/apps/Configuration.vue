@@ -22,11 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import {computed, reactive, ref} from "vue"
+import {computed, shallowReactive} from "vue"
 import ColorConfig from "../ColorConfig.vue";
 import Window from "../Window.vue";
 
-const configScreens = reactive([
+const configScreens = shallowReactive([
     {active: true, component: ColorConfig}
 ])
 

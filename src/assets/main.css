@@ -1,0 +1,32 @@
+.popup {
+    border: 1px solid black;
+    padding: 10px;
+    min-width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    background-color: white;
+}
+
+.popup-buttons {
+    border-top: 1px solid black;
+    width: 100%;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.popup-button {
+    border: 1px solid black;
+    padding: 5px;
+    background: white;
+    cursor: pointer;
+
+}
+
+.popup-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}

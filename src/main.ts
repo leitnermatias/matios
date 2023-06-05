@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import "./assets/main.css"
 
 import * as FaIcons from "oh-vue-icons/icons/fa";
 import { OhVueIcon, addIcons } from "oh-vue-icons";
