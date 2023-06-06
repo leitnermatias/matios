@@ -39,7 +39,7 @@
                 </div>
                 <component 
                 v-if="openedTab"
-                :is="openedTab.component"
+                :is="components[openedTab.type]"
                 :appState="appState"
                 :tabState="openedTab"
                 ></component>
@@ -49,29 +49,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref, shallowRef } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import Window from '../../Window.vue';
-import { AppState, Sheet as Spreadsheet, Tab } from './types';
+import { AppState, Sheet as Spreadsheet, Tab, TabType } from './types';
 import { getCellIdentifiers, getCells } from './utils';
 import Sheet from './tabs/Sheet.vue';
 import Settings from './tabs/Settings.vue';
 import Popup from '../../Popup.vue';
+import { useLocalStorage } from '@vueuse/core';
 
-
-const tabs = ref<Tab[]>([
-    {active: false, open: false, component: shallowRef(Settings), name: 'Settings', type: 'Normal', id: crypto.randomUUID()},
-])
+const components = {
+    'Sheet': Sheet,
+    'Settings': Settings
+}
 
 const activeTabs = computed(() => {
-    return tabs.value.filter(tab => tab.active)
+    return appState.value.tabs.filter(tab => tab.active)
 })
 
 const openedTab = computed(() => {
     return activeTabs.value.find(tab => tab.active && tab.open)
 })
 
-const appState = reactive<AppState>({
-    spreadsheets: []
+const appState = useLocalStorage<AppState>('spreadsheets',{
+    spreadsheets: [],
+    tabs: [
+        {active: false, open: false, name: 'Settings', type: 'Settings', id: crypto.randomUUID()},
+    ]
 })
 
 const popups = reactive({
@@ -88,7 +92,7 @@ function setOpenTab(tabToSet: Tab) {
 }
 
 function setActiveTab(tabToSetName: string, active: boolean) {
-    const tab = tabs.value.find(tab => tab.name === tabToSetName)
+    const tab = appState.value.tabs.find(tab => tab.name === tabToSetName)
 
     if (tab) {
         tab.active = active
@@ -97,7 +101,7 @@ function setActiveTab(tabToSetName: string, active: boolean) {
 
 function closeTab(tab: Tab) {
     if (tab.type === 'Sheet') {
-        appState.spreadsheets = appState.spreadsheets.filter(sheet => sheet.id !== tab.name)
+        appState.value.spreadsheets = appState.value.spreadsheets.filter(sheet => sheet.id !== tab.name)
     }
 
     tab.open = false
@@ -126,7 +130,7 @@ function addSpreadsheet() {
 
         const id = crypto.randomUUID()
 
-        appState.spreadsheets.push({
+        appState.value.spreadsheets.push({
             name,
             numberOfColumns,
             numberOfRows,
@@ -136,11 +140,10 @@ function addSpreadsheet() {
             rowNames,
         })
 
-        tabs.value.push({
+        appState.value.tabs.push({
             active: true,
             open: false,
             name: name,
-            component: shallowRef(Sheet),
             type: 'Sheet',
             id
         })

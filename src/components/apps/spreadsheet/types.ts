@@ -28,15 +28,15 @@ export interface Sheet {
 
 export type AppState = {
     spreadsheets: Sheet[],
+    tabs: Tab[]
 }
 
-export type TabType = 'Sheet' | 'Normal'
+export type TabType = 'Sheet' | 'Settings'
 
 export type Tab = {
     active: boolean,
     open: boolean,
     name: string,
-    component: Component,
     type: TabType,
     id: string
 }
