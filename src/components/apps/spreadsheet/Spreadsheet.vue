@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
 import Window from '../../Window.vue';
-import { AppState, Sheet as Spreadsheet, Tab, TabType } from './types';
+import { AppState, Sheet as Spreadsheet, Tab } from './types';
 import { getCellIdentifiers, getCells } from './utils';
 import Sheet from './tabs/Sheet.vue';
 import Settings from './tabs/Settings.vue';
@@ -111,7 +111,8 @@ function closeTab(tab: Tab) {
 const newSpreadsheet = ref<Spreadsheet>({
     name: "",
     id: "",
-    cells: {},
+    cellsMap: {},
+    cellsArray: [],
     numberOfColumns: 0,
     numberOfRows: 0,
     columnNames: [],
@@ -126,7 +127,7 @@ function addSpreadsheet() {
         
         let columnNames: string[] = getCellIdentifiers(numberOfColumns)
         let rowNames: string[] = getCellIdentifiers(numberOfRows)
-        let cells = getCells(columnNames, rowNames)
+        let {cellsMap, cellsArray} = getCells(columnNames, rowNames)
 
         const id = crypto.randomUUID()
 
@@ -135,7 +136,8 @@ function addSpreadsheet() {
             numberOfColumns,
             numberOfRows,
             id,
-            cells,
+            cellsMap,
+            cellsArray,
             columnNames,
             rowNames,
         })

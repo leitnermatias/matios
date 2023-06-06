@@ -15,11 +15,12 @@ export type Cell = {
 export interface Sheet {
     name: string,
     id: string,
-    cells: {
+    cellsMap: {
         [key: string]: {
             [key: string]: Cell
         }
     },
+    cellsArray: Cell[],
     numberOfColumns: number,
     numberOfRows: number,
     columnNames: string[],

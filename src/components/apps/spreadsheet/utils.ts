@@ -23,26 +23,34 @@ export function getCellIdentifiers(numberOfCells: number) {
 }
 
 export function getCells(columnNames: string[], rowNames: string[]): {
-    [key: string]: { // Each row
-        [key: string]: Cell  // Each column
-    }
+    cellsArray: Cell[],
+    cellsMap: {
+        [key: string]: { // Each row
+            [key: string]: Cell  // Each column
+        }
+    } 
 } {
-    let cells: {
+    let cellsArray: Cell[] = []
+    let cellsMap: {
         [key: string]: { // Each row
             [key: string]: Cell  // Each column
         }
     } = {}
 
     rowNames.forEach(row => {
-        cells[row] = {}
+        cellsMap[row] = {}
         columnNames.forEach(column => {
-            cells[row][column] = {
+            cellsMap[row][column] = {
                 text: "",
-                identifier: `${column}:${row}`
+                identifier: `${row}:${column}`
             }
+            cellsArray.push(cellsMap[row][column])
         })
     })
 
-    return cells
+    return {
+        cellsArray,
+        cellsMap
+    }
 
 }
