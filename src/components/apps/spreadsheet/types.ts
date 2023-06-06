@@ -1,15 +1,23 @@
 import { Component } from "vue"
 
-export type Cell = {
-    text: string
+export type CellFormat = {
+    background?: string,
+    border?: string,
+    color?: string
 }
 
-export type Sheet = {
+export type Cell = {
+    text: string,
+    format?: {background?: string, border?: string}
+}
+
+export interface Sheet {
     name: string,
     id: string,
     cells: Cell[],
     numberOfColumns: number,
     numberOfRows: number,
+    columnNames: string[]
 }
 
 export type AppState = {
