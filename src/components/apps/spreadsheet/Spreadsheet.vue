@@ -31,8 +31,6 @@
             <div id="container">
                 <div id="buttons">
                     <span class="button" @click="popups.add = true" title="New spreadsheet"><v-icon name="fa-plus"></v-icon></span>
-                    <span class="button" title="Save"><v-icon name="fa-save"></v-icon></span>
-                    <span class="button" @click="setActiveTab('Settings', true)" title="Configuration"><v-icon name="fa-cog"></v-icon></span>
                 </div>
                 <div id="tabs">
                     <span class="tab" :class="{active: tab.open}" @click="setOpenTab(tab)" v-for="tab in activeTabs">{{tab.name}} <v-icon @click="closeTab(tab)" name="fa-times"></v-icon></span>
