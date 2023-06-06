@@ -1,17 +1,4 @@
 <template>
-    <!-- <div v-if="sheet" id="cells">
-        <span v-for="column in sheet?.columnNames" class="column">{{ column }}</span>
-        <span v-for="row in sheet?.numberOfRows" class="row">{{ row }}</span>
-        <input 
-        class="cell" 
-        v-for="cell in sheet.cells" 
-        :style="cell.format" 
-        type="text" 
-        @keyup.enter="interpretCellValue(cell)" 
-        @blur="interpretCellValue(cell)" 
-        v-model="cell.text"
-        >
-    </div> -->
 
     <table v-if="sheet" id="cells">
         <thead>
@@ -26,14 +13,18 @@
         </thead>
 
         <tbody>
-            <tr v-for="cell in sheet.numberOfRows">
+            <tr v-for="row in Object.keys(sheet.cells)">
                 <p class="row identifier">
-                    {{ cell }}
+                    {{ row }}
                 </p>
-                <td v-for="cellColumn in sheet.columnNames" :title="`${cellColumn}:${cell}`">
+                <td v-for="column in Object.keys(sheet.cells[row])" :title="`${column}:${row}`">
                     <input 
                     type="text"
                     class="cell" 
+                    :style="sheet.cells[row][column].format"
+                    v-model="sheet.cells[row][column].text"
+                    @keyup.enter="interpretCellValue(sheet!.cells[row][column])" 
+                    @blur="interpretCellValue(sheet!.cells[row][column])" 
                     >
                 </td>
             </tr>
@@ -78,7 +69,7 @@ function formatCell(cell: Cell, style?: CellFormat) {
 <style scoped>
 
 #cells {
-    overflow: scroll;
+    overflow: auto;
     display: block;
     max-width: 1100px;
     max-height: 326px;
@@ -110,10 +101,12 @@ td, tr {
     border: 1px solid #ccc;
     margin: 0px;
     padding: 0px;
+    cursor: default;
 }
 
 .row {
     width: 20px;
+    height: 20px;
     text-align: center;
     font-size: 12px;
 }

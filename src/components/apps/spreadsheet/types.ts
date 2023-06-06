@@ -8,16 +8,22 @@ export type CellFormat = {
 
 export type Cell = {
     text: string,
+    identifier: string,
     format?: {background?: string, border?: string}
 }
 
 export interface Sheet {
     name: string,
     id: string,
-    cells: Cell[],
+    cells: {
+        [key: string]: {
+            [key: string]: Cell
+        }
+    },
     numberOfColumns: number,
     numberOfRows: number,
-    columnNames: string[]
+    columnNames: string[],
+    rowNames: string[],
 }
 
 export type AppState = {

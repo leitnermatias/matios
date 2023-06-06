@@ -51,8 +51,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, shallowRef } from 'vue';
 import Window from '../../Window.vue';
-import { Cell, AppState, Sheet as Spreadsheet, Tab } from './types';
-import { abc } from './utils';
+import { AppState, Sheet as Spreadsheet, Tab } from './types';
+import { getCellIdentifiers, getCells } from './utils';
 import Sheet from './tabs/Sheet.vue';
 import Settings from './tabs/Settings.vue';
 import Popup from '../../Popup.vue';
@@ -107,10 +107,11 @@ function closeTab(tab: Tab) {
 const newSpreadsheet = ref<Spreadsheet>({
     name: "",
     id: "",
-    cells: [],
+    cells: {},
     numberOfColumns: 0,
     numberOfRows: 0,
-    columnNames: []
+    columnNames: [],
+    rowNames: [],
 })
 
 function addSpreadsheet() {
@@ -118,36 +119,11 @@ function addSpreadsheet() {
 
     if (name !== "" && numberOfColumns > 0 && numberOfRows > 0) {
 
-        let cells: Cell[] = []
-
-        let columnNames: string[] = []
-
-        let excessNumberIdentifier = 0
-        let abcIndex = 0
-        let totalColumns = numberOfColumns
-
-
-        // Creates the column names
-        while (totalColumns > 0) {
-
-            if (abc[abcIndex] === undefined) {
-                excessNumberIdentifier += 1
-                abcIndex = 0
-            }
-
-            columnNames.push(`${abc[abcIndex].toUpperCase()}${excessNumberIdentifier === 0 ? '' : excessNumberIdentifier}`)
-
-            abcIndex += 1
-            totalColumns -= 1
-        }
-
-
-        for (let i = 0; i < numberOfColumns * numberOfRows; i++) {
-            cells.push({
-                text: ""
-            })
-        }
         
+        let columnNames: string[] = getCellIdentifiers(numberOfColumns)
+        let rowNames: string[] = getCellIdentifiers(numberOfRows)
+        let cells = getCells(columnNames, rowNames)
+
         const id = crypto.randomUUID()
 
         appState.spreadsheets.push({
@@ -156,7 +132,8 @@ function addSpreadsheet() {
             numberOfRows,
             id,
             cells,
-            columnNames
+            columnNames,
+            rowNames,
         })
 
         tabs.value.push({
