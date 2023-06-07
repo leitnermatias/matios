@@ -12,6 +12,7 @@
     "@vueuse/components": "^10.0.2",
     "@vueuse/core": "^10.0.2",
     "oh-vue-icons": "1.0.0-rc3",
+    "phaser": "^3.60.0",
     "vue": "^3.2.47"
   },
   "devDependencies": {

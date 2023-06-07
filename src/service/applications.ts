@@ -1,10 +1,6 @@
 import {defineAsyncComponent, reactive} from "vue"
 import { Component, shallowRef } from 'vue'
-// import Calculator from "../components/apps/Calculator.vue"
-// import Terminal from "../components/apps/Terminal.vue"
-// import TextEditor from "../components/apps/TextEditor.vue"
-// import Spreadsheet from "../components/apps/spreadsheet/Spreadsheet.vue"
-// import Arcanoid from "../components/apps/arcanoid/Arcanoid.vue"
+
 const Calculator = defineAsyncComponent(() =>
   import('../components/apps/Calculator.vue')
 )
@@ -80,9 +76,9 @@ export default reactive<
         {
             opened: false,
             showing: false,
-            label: 'Arcanoid',
-            title: 'Arcanoid',
-            name: 'Arcanoid',
+            label: 'Spaceship',
+            title: 'Spaceship',
+            name: 'Spaceship',
             icon: 'fa-place-of-worship',
             component: shallowRef(Arcanoid)
         },
