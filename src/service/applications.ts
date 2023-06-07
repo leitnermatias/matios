@@ -1,9 +1,25 @@
-import {reactive} from "vue"
+import {defineAsyncComponent, reactive} from "vue"
 import { Component, shallowRef } from 'vue'
-import Calculator from "../components/apps/Calculator.vue"
-import Terminal from "../components/apps/Terminal.vue"
-import TextEditor from "../components/apps/TextEditor.vue"
-import Spreadsheet from "../components/apps/spreadsheet/Spreadsheet.vue"
+// import Calculator from "../components/apps/Calculator.vue"
+// import Terminal from "../components/apps/Terminal.vue"
+// import TextEditor from "../components/apps/TextEditor.vue"
+// import Spreadsheet from "../components/apps/spreadsheet/Spreadsheet.vue"
+// import Arcanoid from "../components/apps/arcanoid/Arcanoid.vue"
+const Calculator = defineAsyncComponent(() =>
+  import('../components/apps/Calculator.vue')
+)
+const Terminal = defineAsyncComponent(() =>
+  import('../components/apps/Terminal.vue')
+)
+const TextEditor = defineAsyncComponent(() =>
+  import('../components/apps/TextEditor.vue')
+)
+const Spreadsheet = defineAsyncComponent(() =>
+  import("../components/apps/spreadsheet/Spreadsheet.vue")
+)
+const Arcanoid = defineAsyncComponent(() =>
+  import("../components/apps/arcanoid/Arcanoid.vue")
+)
 
 export type Application = {
     opened: boolean,
@@ -60,6 +76,15 @@ export default reactive<
             name: 'Spreadsheets',
             icon: 'fa-chart-bar',
             component: shallowRef(Spreadsheet)
+        },
+        {
+            opened: false,
+            showing: false,
+            label: 'Arcanoid',
+            title: 'Arcanoid',
+            name: 'Arcanoid',
+            icon: 'fa-place-of-worship',
+            component: shallowRef(Arcanoid)
         },
     ],
     openApp(application: Application) {
