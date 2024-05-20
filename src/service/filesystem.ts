@@ -1,12 +1,16 @@
+type SystemPointType = 'FILE' | 'DIRECTORY'
+
 export class SystemPoint {
     label: string
     childs: SystemPoint[]
     parent: SystemPoint | null
+    type: SystemPointType
 
-    constructor(label: string) {
+    constructor(label: string, type: SystemPointType = 'DIRECTORY') {
         this.label = label
         this.childs = [] // Replace for assignment on constructor
         this.parent = null
+        this.type = type
     }
 
     addChild(newSystemPoint: SystemPoint) {

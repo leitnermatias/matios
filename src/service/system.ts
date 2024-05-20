@@ -34,10 +34,6 @@ const publicCommands: Command[] = [
 
             let paths = dirPath.split('/').filter(Boolean)
 
-            if (!isRelativePath) {
-                paths = ["/", ...paths]
-            }
-
             let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
 
             for (let i = 0; i < paths.length; i++) {
@@ -56,7 +52,8 @@ const publicCommands: Command[] = [
         },
         help: `
             <p>Create a directory in the system</p>
-            <p>Usage example: mkdir /ABSOLUTE/PATH/TO/FOLDER</p>
+            <p>It will create any directories that don't exist in the path automatically</p>
+            <p>Usage example: <b>mkdir <i>PATH</i></b></p>
         `,
     },
     {
@@ -77,10 +74,6 @@ const publicCommands: Command[] = [
             
             let paths = dirPath.split('/').filter(Boolean)
 
-            if (!isRelativePath) {
-                paths = ["/", ...paths]
-            }
-
             let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
 
             if (currentSystemPoint.label === paths[0]) {
@@ -99,6 +92,10 @@ const publicCommands: Command[] = [
                 } else {
                     return new Error(`The specified path doesn't exist`)
                 }
+            }
+
+            if (currentSystemPoint.type !== 'DIRECTORY') {
+                return new Error(`The specified path doesn't lead to a directory`)
             }
 
             ctx.currentDir.value = currentSystemPoint
@@ -127,7 +124,8 @@ const publicCommands: Command[] = [
             let  output = ``
 
             ctx.currentDir.value.childs.forEach(child => {
-                output += `<span style='color: green'>${child.label}</span> `
+                const color = child.type === 'FILE' ? 'white' : 'green'
+                output += `<span style='color: ${color}'>${child.label}</span> `
             })
 
             ctx.history.value.push(output)
@@ -146,6 +144,56 @@ const publicCommands: Command[] = [
         },
         help: `
             <p>Returns the current directory the user is positioned in</p>
+        `
+    },
+    {
+        exec: 'touch',
+        func: (ctx: Context) => {
+
+            const args = ctx.prompt.value.split(' ').slice(1)
+
+            if (args.length === 0) {
+                return new Error(`
+                    <p>Invalid arguments for command <b>touch</b></p>
+                    <p>Type <b>help touch</b> to see some usage examples</p>
+                `)
+            }
+
+            const dirPath = args[0]
+
+            const isRelativePath = !dirPath.startsWith('/')
+
+            let paths = dirPath.split('/').filter(Boolean)
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            for (let i = 0; i < paths.length; i++) {
+                const dirFound = currentSystemPoint.childs.find(child => child.label === paths[i])
+
+                if (dirFound) {
+                    currentSystemPoint = dirFound
+                } else {
+                    let newSystemPoint: SystemPoint | null = null
+                    if (i === paths.length - 1) {
+                        // Last in the path, creates the file for it
+                        newSystemPoint = new SystemPoint(paths[i], 'FILE')
+                    } else {
+                        // Otherwise creates the corresponding directory in the path
+                        newSystemPoint = new SystemPoint(paths[i], 'DIRECTORY')
+
+                    }
+                    currentSystemPoint.addChild(newSystemPoint)
+                    currentSystemPoint = newSystemPoint
+                }
+            }
+
+            return null
+        },
+        help: `
+            <p>Creates a file in the system</p>
+            <p>The command will create any directories that don't exist but are present in the path</p>
+            <p>Usage: <b>touch <i>PATH</i></b></p>
+            <p>Example usage: <b>touch /home/newfile.txt</b></p>
         `
     },
     {
