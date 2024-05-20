@@ -5,14 +5,14 @@ import globalState from "./globalState";
 
 import Configuration from "./components/apps/Configuration.vue"
 
-const configApp = shallowRef({
+const configApp = ref({
   opened: false,
   showing: false,
   label: 'Configuration',
   title: 'Configuration',
   name: 'Configuration',
   icon: 'fa-cog',
-  component: Configuration
+  component: shallowRef(Configuration) 
 })
 
 const showStartMenu = ref(false);
