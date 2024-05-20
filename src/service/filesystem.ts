@@ -1,4 +1,4 @@
-class SystemPoint {
+export class SystemPoint {
     label: string
     childs: SystemPoint[]
     parent: SystemPoint | null
@@ -65,11 +65,7 @@ function mkdir(path: string, currentSystemPoint: SystemPoint = fileSystemRoot): 
     return null
 }
 
-const test = mkdir("/usr/home")
-
-console.log(test, fileSystemRoot)
-
 export default {
     fileSystemRoot,
-    mkdir
+    mkdir,
 }
