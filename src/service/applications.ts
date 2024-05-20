@@ -4,8 +4,8 @@ import { Component, shallowRef } from 'vue'
 const Calculator = defineAsyncComponent(() =>
   import('../components/apps/Calculator.vue')
 )
-const Terminal = defineAsyncComponent(() =>
-  import('../components/apps/Terminal.vue')
+const TerminalV2 = defineAsyncComponent(() =>
+  import('../components/apps/TerminalV2.vue')
 )
 const TextEditor = defineAsyncComponent(() =>
   import('../components/apps/TextEditor.vue')
@@ -53,7 +53,7 @@ export default reactive<
             title: 'Terminal',
             name: 'Terminal',
             icon: 'fa-terminal',
-            component: shallowRef(Terminal)
+            component: shallowRef(TerminalV2)
         },
         {
             opened: false,
