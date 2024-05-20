@@ -41,31 +41,6 @@ defaultLabels.forEach(label => {
 })
 
 
-function mkdir(path: string, currentSystemPoint: SystemPoint = fileSystemRoot): Error | null {
-    let separated = path.split('/').filter(Boolean)
-
-    for (let i = 0; i < separated.length; i++) {
-
-        const foundDir = currentSystemPoint.childs.find(child => child.label === separated[i])
-
-        if (!foundDir) {
-            if (i === separated.length - 1) {
-                currentSystemPoint.addChild(new SystemPoint(separated[i]))
-            } else {
-                return new Error(`The directory ${separated[i]} doesn't exist`)
-            }
-        } else if (foundDir && i === separated.length - 1) {
-            return new Error(`The directory ${separated[i]} already exists`)
-        } else {
-            currentSystemPoint = foundDir
-        }
-        
-    }
-
-    return null
-}
-
 export default {
     fileSystemRoot,
-    mkdir,
 }

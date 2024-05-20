@@ -23,16 +23,93 @@ const publicCommands: Command[] = [
             if (args.length === 0 || args.length > 1) {
                 return new Error(`
                 <b>Invalid arguments for command mkdir</b>
-                <p>Usage example: mkdir /ABSOLUTE/PATH/TO/FOLDER</p>
+                <p>Usage: <b>mkdir <i>PATH</i></b></p>
+                <p>Example usage: <b>mkdir /home/mynewdir</b></p>
                 `)
             }
 
-            return FileSystem.mkdir(args[0])
+            const dirPath = args[0]
+
+            const isRelativePath = !dirPath.startsWith('/')
+
+            let paths = dirPath.split('/').filter(Boolean)
+
+            if (!isRelativePath) {
+                paths = ["/", ...paths]
+            }
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            for (let i = 0; i < paths.length; i++) {
+                const dirFound = currentSystemPoint.childs.find(child => child.label === paths[i])
+
+                if (dirFound) {
+                    currentSystemPoint = dirFound
+                } else {
+                    const newSystemPoint = new SystemPoint(paths[i])
+                    currentSystemPoint.addChild(newSystemPoint)
+                    currentSystemPoint = newSystemPoint
+                }
+            }
+
+            return null
         },
         help: `
             <p>Create a directory in the system</p>
             <p>Usage example: mkdir /ABSOLUTE/PATH/TO/FOLDER</p>
         `,
+    },
+    {
+        exec: 'cd',
+        func: (ctx: Context) => {
+            const args = ctx.prompt.value.split(' ').slice(1)
+
+            if (args.length === 0 || args[0] === '') { // Takes user to home directory
+                const homeDir = FileSystem.fileSystemRoot.childs.find(child => child.label === 'home')
+                if (homeDir) {
+                    ctx.currentDir.value = homeDir
+                }
+            }
+
+            const dirPath = args[0]
+
+            const isRelativePath = !dirPath.startsWith('/')
+            
+            let paths = dirPath.split('/').filter(Boolean)
+
+            if (!isRelativePath) {
+                paths = ["/", ...paths]
+            }
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            if (currentSystemPoint.label === paths[0]) {
+                ctx.currentDir.value = currentSystemPoint
+                return null
+            } else if (paths[0] === '..') {
+                ctx.currentDir.value = currentSystemPoint.parent ? currentSystemPoint.parent : currentSystemPoint
+                return null
+            }
+
+            for (let i = 0; i < paths.length; i++) {
+                const dirFound = currentSystemPoint.childs.find(child => child.label === paths[i])
+
+                if (dirFound) {
+                    currentSystemPoint = dirFound
+                } else {
+                    return new Error(`The specified path doesn't exist`)
+                }
+            }
+
+            ctx.currentDir.value = currentSystemPoint
+
+            return null
+        },
+        help: `
+            <p>Navigates through the system, you can use a relative or absolute path.</p>
+            <p>Usage: <b>cd <i>PATH</i></b></p>
+            <p>Usage example: <b>cd /home</b></p>
+        `
     },
     {
         exec: 'clear',
@@ -60,6 +137,16 @@ const publicCommands: Command[] = [
         help: `
         <p>Shows the contents of the current directory</p>
         `,
+    },
+    {
+        exec: 'pwd',
+        func: (ctx: Context) => {
+            ctx.history.value.push(ctx.currentDir.value.getPath())
+            return null
+        },
+        help: `
+            <p>Returns the current directory the user is positioned in</p>
+        `
     },
     {
         exec: 'help',

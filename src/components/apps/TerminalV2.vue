@@ -53,7 +53,7 @@ function runCommand() {
     const toExec = command.value.split(' ')[0]
     const sysCommand = System.publicCommands.find(cmd => cmd.exec === toExec)
     if (sysCommand) {
-        history.value.push(`${cwd.value} ${command.value}`)
+        history.value.push(`${cwd.value} <b style="color: green">></b> ${command.value} `)
         const result = sysCommand.func(context.value)
         if (result) {
             history.value.push(result.message)
