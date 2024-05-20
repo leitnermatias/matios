@@ -1,7 +1,7 @@
 ## MatiOS
 This is a project I made for fun, it emulates an operative system with applications like a Text Editor, Spreadsheets, Calculator.
 
-A live version of it can be found at [https://matios.vercel.app/](https://matios.vercel.app/)
+A live version of it can be found at [https://matios.matiasleitner.com/](https://matios.matiasleitner.com/)
 
 ## Recommended IDE Setup
 
