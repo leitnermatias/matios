@@ -121,11 +121,43 @@ const publicCommands: Command[] = [
     {
         exec: 'ls',
         func: (ctx: Context) => {
-            let  output = ``
 
-            ctx.currentDir.value.childs.forEach(child => {
+            const args = ctx.prompt.value.split(' ').slice(1)
+
+            if (args.length === 0) {
+                let  output = ``
+    
+                ctx.currentDir.value.childs.forEach(child => {
+                    const color = child.type === 'FILE' ? 'white' : 'green'
+                    const bgColor = child.permissions.includes('WRITE') ? 'transparent' : 'lightblue'
+                    output += `<span style='color: ${color}; background-color: ${bgColor}'>${child.label}</span> `
+                })
+    
+                ctx.history.value.push(output)
+
+                return null
+            }
+
+            const dirPath = args[0]
+
+            const isRelativePath = !dirPath.startsWith('/')
+
+            let paths = dirPath.split('/').filter(Boolean)
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            const file = FileSystem.findSystemPoint(paths, currentSystemPoint)
+
+            if (file instanceof Error) {
+                return file
+            }
+
+            let  output = ``
+    
+            file.childs.forEach(child => {
                 const color = child.type === 'FILE' ? 'white' : 'green'
-                output += `<span style='color: ${color}'>${child.label}</span> `
+                const bgColor = child.permissions.includes('WRITE') ? 'transparent' : 'lightblue'
+                output += `<span style='color: ${color}; background-color: ${bgColor}'>${child.label}</span> `
             })
 
             ctx.history.value.push(output)
