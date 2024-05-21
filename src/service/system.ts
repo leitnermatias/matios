@@ -42,7 +42,7 @@ const publicCommands: Command[] = [
                 if (dirFound) {
                     currentSystemPoint = dirFound
                 } else {
-                    const newSystemPoint = new SystemPoint(paths[i])
+                    const newSystemPoint = new SystemPoint(paths[i], 'DIRECTORY', ["WRITE", "READ"])
                     currentSystemPoint.addChild(newSystemPoint)
                     currentSystemPoint = newSystemPoint
                 }
@@ -295,11 +295,31 @@ const publicCommands: Command[] = [
 
             let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
 
+            
             const file = FileSystem.findSystemPoint(paths, currentSystemPoint)
+            
 
             if (file instanceof Error) {
                 return file
             } else {
+                if (!file.permissions.includes('WRITE')) {
+                    return new Error(`Permission denied: ${file.label} is read-only`)
+                }
+
+                const errors = file.traverseAndExecute(
+                    (currentSystemPoint) => {
+                        if (!currentSystemPoint.permissions.includes('WRITE')) {
+                            return new Error (`Permission denied: ${currentSystemPoint.label} is read-only`)
+                        }
+                        return null
+                    }
+                )
+
+                if (errors.length > 0) {
+                    errors.forEach(error => ctx.history.value.push(error.message))
+                    return new Error(`Error while trying to delete the system point ${file.label}`)
+                }
+
                 if (file.parent !== null) {
                     file.parent.childs = file.parent.childs.filter(child => child.label !== file.label)  // Remove child reference
                     file.parent = null // Remove parent reference
