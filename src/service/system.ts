@@ -175,7 +175,7 @@ const publicCommands: Command[] = [
         help: `
         <p>Shows the contents of the current directory (if no path specified) or of the path specified</p>
         <p>Usage: <b>ls <i>PATH</i></b></p>
-        <p>Example usage: <b>touch /home/newfile.txt</b></p>
+        <p>Example usage: <b>ls /home</b> or <b>ls</b></p>
         `,
     },
     {
@@ -218,10 +218,10 @@ const publicCommands: Command[] = [
                     let newSystemPoint: SystemPoint | null = null
                     if (i === paths.length - 1) {
                         // Last in the path, creates the file for it
-                        newSystemPoint = new SystemPoint(paths[i], 'FILE')
+                        newSystemPoint = new SystemPoint(paths[i], 'FILE', ["READ", "WRITE"])
                     } else {
                         // Otherwise creates the corresponding directory in the path
-                        newSystemPoint = new SystemPoint(paths[i], 'DIRECTORY')
+                        newSystemPoint = new SystemPoint(paths[i], 'DIRECTORY', ["WRITE", "READ"])
 
                     }
                     currentSystemPoint.addChild(newSystemPoint)
@@ -264,6 +264,10 @@ const publicCommands: Command[] = [
 
             if (file instanceof Error) {
                 return file
+            }
+
+            if (!file.permissions.includes("WRITE") || file.type !== 'FILE') {
+                return new Error(`Permission denied: can't write to ${dirPath}`)
             }
 
             file.content = content
