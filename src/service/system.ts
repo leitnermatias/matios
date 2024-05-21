@@ -197,6 +197,124 @@ const publicCommands: Command[] = [
         `
     },
     {
+        exec: 'write',
+        func: (ctx: Context) => {
+
+            const args = ctx.prompt.value.split(' ').slice(1)
+
+            if (args.length < 2) {
+                return new Error(`
+                    <p>Invalid arguments for command <b>write</b></p>
+                    <p>Type <b>help write</b> to see some usage examples</p>
+                `)
+            }
+            const dirPath = args[0]
+            const content = args.slice(1).join(' ')  // Everything after the first argument will be added to the file
+
+
+            const isRelativePath = !dirPath.startsWith('/')
+
+            let paths = dirPath.split('/').filter(Boolean)
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            const file = FileSystem.findSystemPoint(paths, currentSystemPoint)
+
+            if (file instanceof Error) {
+                return file
+            }
+
+            file.content = content
+
+            return null
+        },
+        help: `
+        <p>Allows writing to the specified file</p>
+        <p>Usage: <b>write <i>PATH</i> <i>CONTENT</i></b></p>
+        <p>Example usage: <b>write /home/newfile.txt "Hello World!"</b></p>
+        `
+    },
+    {
+        exec: 'cat',
+        func: (ctx: Context) => {
+            const args = ctx.prompt.value.split(' ').slice(1)
+
+            if (args.length === 0) {
+                return new Error(`
+                    <p>Invalid arguments for command <b>cat</b></p>
+                    <p>Type <b>help cat</b> to see some usage examples</p>
+                `)
+            }
+
+            const dirPath = args[0]
+
+            const isRelativePath = !dirPath.startsWith('/')
+
+            let paths = dirPath.split('/').filter(Boolean)
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            const file = FileSystem.findSystemPoint(paths, currentSystemPoint)
+
+            if (file instanceof Error) {
+                return file
+            } else {
+                ctx.history.value.push(file.content)
+            }
+
+            return null
+
+        },
+        help: `
+        <p>Outputs the contents of a file into the terminal</p>
+        <p>Usage: <b>cat <i>PATH</i></b></p>
+        <p>Example usage: <b>cat /home/newfile.txt</b></p>
+        `
+    },
+    {
+        exec: 'rm',
+        func: (ctx: Context) => {
+            const args = ctx.prompt.value.split(' ').slice(1)
+
+            if (args.length === 0) {
+                return new Error(`
+                    <p>Invalid arguments for command <b>rm</b></p>
+                    <p>Type <b>help rm</b> to see some usage examples</p>
+                `)
+            }
+
+            const dirPath = args[0]
+
+            if (dirPath === '/') {
+                return new Error("Permission denied: can't delete the / directory")
+            }
+
+            const isRelativePath = !dirPath.startsWith('/')
+
+            let paths = dirPath.split('/').filter(Boolean)
+
+            let currentSystemPoint = isRelativePath ? ctx.currentDir.value : FileSystem.fileSystemRoot
+
+            const file = FileSystem.findSystemPoint(paths, currentSystemPoint)
+
+            if (file instanceof Error) {
+                return file
+            } else {
+                if (file.parent !== null) {
+                    file.parent.childs = file.parent.childs.filter(child => child.label !== file.label)  // Remove child reference
+                    file.parent = null // Remove parent reference
+                }
+            }
+
+            return null
+        },
+        help: `
+        <p>Removes the corresponding systempoint in the specified path and all of its children</p>
+        <p>Usage: <b>rm <i>PATH</i></b></p>
+        <p>Example usage: <b>rm /home/newfile.txt</b></p>
+        `
+    },
+    {
         exec: 'help',
         func: (ctx: Context) => {
             const args = ctx.prompt.value.split(' ').slice(1)

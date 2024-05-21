@@ -91,6 +91,7 @@ function runCommand() {
     background-color: black;
     color: green;
     border: none;
+    width: 80%;
 }
 
 #prompt-input:focus {
