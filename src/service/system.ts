@@ -152,6 +152,14 @@ const publicCommands: Command[] = [
                 return file
             }
 
+            if (file.type === 'FILE') {
+                return new Error(`${dirPath} is not a directory`)
+            }
+
+            if (!file.permissions.includes('READ')) {
+                return new Error(`Permission denied: can't read ${dirPath}`)
+            }
+
             let  output = ``
     
             file.childs.forEach(child => {
@@ -165,7 +173,9 @@ const publicCommands: Command[] = [
             return null
         },
         help: `
-        <p>Shows the contents of the current directory</p>
+        <p>Shows the contents of the current directory (if no path specified) or of the path specified</p>
+        <p>Usage: <b>ls <i>PATH</i></b></p>
+        <p>Example usage: <b>touch /home/newfile.txt</b></p>
         `,
     },
     {
