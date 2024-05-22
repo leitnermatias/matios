@@ -1,3 +1,6 @@
+import SystemApps from "@/service/applications"
+import { computed, watch } from "vue"
+
 type SystemPointType = 'FILE' | 'DIRECTORY'
 
 type Permission = 'WRITE' | 'READ'
@@ -66,12 +69,23 @@ export class SystemPoint {
 const fileSystemRoot = new SystemPoint('/', 'DIRECTORY', ["READ"])
 
 // Default folders
-const defaultLabels = ['usr', 'home', 'bin', 'proc']
+const defaultLabels = ['usr', 'home', 'bin']
 defaultLabels.forEach(label => {
     fileSystemRoot.addChild(
         new SystemPoint(label, 'DIRECTORY', ["READ"])
     )
 })
+
+watch(SystemApps.applications, () => {
+    const running = SystemApps.applications.filter(app => app.opened === true)
+
+    const procDir = new SystemPoint('proc', 'DIRECTORY', ["READ"])
+    fileSystemRoot.addChild(procDir)
+    
+    running.map(app => {
+        procDir.addChild(new SystemPoint(app.name, 'FILE', ["READ"]))
+    })
+}, {immediate: true})
 
 function findSystemPoint(paths: string[], currentSystemPoint: SystemPoint): Error | SystemPoint {
     // Finds the specific SystemPoint given its path

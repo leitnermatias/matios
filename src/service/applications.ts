@@ -36,7 +36,7 @@ export default reactive<
     }
 >({
     // Setup default applications here
-    applications: [
+    applications: reactive([
         {
             opened: false,
             showing: false,
@@ -82,7 +82,7 @@ export default reactive<
             icon: 'fa-place-of-worship',
             component: shallowRef(Arcanoid)
         },
-    ],
+    ]),
     openApp(application: Application) {
         application.opened = true;
         application.showing = true;

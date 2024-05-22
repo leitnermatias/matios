@@ -128,7 +128,7 @@ const publicCommands: Command[] = [
                 let  output = ``
     
                 ctx.currentDir.value.childs.forEach(child => {
-                    const color = child.type === 'FILE' ? 'white' : 'green'
+                    const color = child.type === 'FILE' ? 'blue' : 'green'
                     const bgColor = child.permissions.includes('WRITE') ? 'transparent' : 'lightblue'
                     output += `<span style='color: ${color}; background-color: ${bgColor}'>${child.label}</span> `
                 })
@@ -163,7 +163,7 @@ const publicCommands: Command[] = [
             let  output = ``
     
             file.childs.forEach(child => {
-                const color = child.type === 'FILE' ? 'white' : 'green'
+                const color = child.type === 'FILE' ? 'blue' : 'green'
                 const bgColor = child.permissions.includes('WRITE') ? 'transparent' : 'lightblue'
                 output += `<span style='color: ${color}; background-color: ${bgColor}'>${child.label}</span> `
             })
