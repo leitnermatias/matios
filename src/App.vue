@@ -60,6 +60,7 @@ onMounted(() => {
         <div v-if="showStartMenu" id="start-menu">
           <div id="start-menu-buttons">
             <button @click="startApp(configApp)" class="start-menu-button"><v-icon name="fa-cog"></v-icon></button>
+            <button @click="startApp(helpApp)" class="start-menu-button"><v-icon name="fa-regular-question-circle"></v-icon></button>
           </div>
           <span @click="startApp(app)" class="start-menu-app" v-for="app in ApplicationService.applications">
             <v-icon v-if="app.icon" :name="app.icon"></v-icon>{{ app.name }}
