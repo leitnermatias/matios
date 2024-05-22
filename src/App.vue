@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, shallowRef } from "vue";
+import { ref, computed, shallowRef, onMounted } from "vue";
 import ApplicationService, {Application} from "./service/applications"
 import globalState from "./globalState";
 
 import Configuration from "./components/apps/Configuration.vue"
+import OSHelp from "@/components/apps/OSHelp.vue"
 
 const configApp = ref({
   opened: false,
@@ -15,6 +16,16 @@ const configApp = ref({
   component: shallowRef(Configuration) 
 })
 
+const helpApp = ref({
+  opened: false,
+  showing: false,
+  label: 'OS Help',
+  title: 'How the System works',
+  name: 'OS Help',
+  icon: 'fa-regular-question-circle',
+  component: shallowRef(OSHelp)
+})
+
 const showStartMenu = ref(false);
 
 function startApp(app: Application) {
@@ -23,15 +34,21 @@ function startApp(app: Application) {
   showStartMenu.value = false;
 }
 
-const extraApps = shallowRef<Application[]>([
-  configApp.value
+const staticApps = shallowRef<Application[]>([
+  configApp.value,
+  helpApp.value
 ])
 
 const activeApps = computed<Application[]>(() => {
   return [
     ...ApplicationService.applications.filter(app => app.opened),
-    ...extraApps.value
+    ...staticApps.value
   ]
+})
+
+onMounted(() => {
+  helpApp.value.opened = true
+  helpApp.value.showing = true
 })
 
 </script>
@@ -79,7 +96,7 @@ const activeApps = computed<Application[]>(() => {
           class="application" 
           :key="app.name"
           v-show="app.opened"
-          v-for="app in [...ApplicationService.applications, configApp]"
+          v-for="app in [...ApplicationService.applications, ...staticApps]"
           @click="() => app.showing = !app.showing"
           ><v-icon :name="app.icon"></v-icon>  {{ app.label }}</span>
         </TransitionGroup>
