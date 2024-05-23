@@ -86,6 +86,10 @@ onMounted(() => {
           </template>
         </component>
       </TransitionGroup>
+      <a href="https://github.com/leitnermatias/matios" target="_blank" id="github-btn">
+        <v-icon name="fa-github"></v-icon>
+        Look at the code here!
+      </a>
     </div>
     <div id="bottom-bar" :style="globalState.bottomNavStyles">
       <button @click="() => showStartMenu = !showStartMenu" id="start-button">
@@ -260,5 +264,10 @@ onMounted(() => {
   border-radius: 2px;
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.372);
   height:auto
+}
+
+#github-btn {
+  text-decoration: none;
+  color: inherit;
 }
 </style>
