@@ -269,5 +269,6 @@ onMounted(() => {
 #github-btn {
   text-decoration: none;
   color: inherit;
+  font-size: 1.2em;
 }
 </style>
